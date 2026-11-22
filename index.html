@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cấp quyền TikTok</title>
+<style>
+:root{--bg:#f5f6f9;--card:#fff;--line:#e0e3eb;--ink:#171a21;--ink2:#5c6477;
+      --ok:#146b47;--ok-bg:#e1f2ea;--bad:#a52a22;--bad-bg:#fae4e2;--accent:#2f52c4}
+@media (prefers-color-scheme:dark){:root{--bg:#101219;--card:#181b23;--line:#2b3040;
+      --ink:#e9ecf4;--ink2:#9aa2b5;--ok:#54c395;--ok-bg:#14281f;--bad:#f0857c;
+      --bad-bg:#2d1a18;--accent:#8ba6f0;color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);min-height:100vh;
+     display:flex;align-items:center;justify-content:center;padding:20px;
+     font:16px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;
+      padding:30px;max-width:620px;width:100%}
+h1{font-size:21px;margin:0 0 6px;letter-spacing:-.02em}
+p{color:var(--ink2);margin:0 0 16px}
+.box{padding:14px;border-radius:9px;margin:16px 0;font-size:15px}
+.ok{background:var(--ok-bg);color:var(--ok)}
+.bad{background:var(--bad-bg);color:var(--bad)}
+code{background:rgba(128,128,128,.14);padding:2px 6px;border-radius:5px;
+     font-size:13.5px;word-break:break-all}
+#url{display:block;padding:13px;margin-top:10px;font:13px/1.5 ui-monospace,monospace}
+button{font:600 15px system-ui;background:var(--accent);color:#fff;border:0;
+       border-radius:9px;padding:12px 20px;cursor:pointer;width:100%;margin-top:12px}
+button:hover{filter:brightness(1.08)}
+ol{color:var(--ink2);padding-left:20px;margin:8px 0 0}
+li{margin-bottom:5px}
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>Cấp quyền TikTok</h1>
+  <p>Trang này chỉ để nhận mã uỷ quyền từ TikTok. Nó không gửi gì đi đâu cả —
+     mọi thứ chạy ngay trong trình duyệt của bạn.</p>
+  <div id="ket-qua"></div>
+  <div id="huong-dan"></div>
+</div>
+<script>
+const q = new URLSearchParams(location.search);
+const code = q.get("code");
+const err = q.get("error");
+const kq = document.getElementById("ket-qua");
+const hd = document.getElementById("huong-dan");
+
+if (code) {
+  kq.innerHTML = `<div class="box ok"><b>Đã nhận mã uỷ quyền.</b></div>
+    <p>Copy toàn bộ địa chỉ dưới đây rồi dán vào cửa sổ dòng lệnh:</p>
+    <code id="url">${location.href.replace(/[<>]/g, "")}</code>
+    <button onclick="chep()">Copy địa chỉ</button>`;
+} else if (err) {
+  kq.innerHTML = `<div class="box bad"><b>TikTok từ chối:</b> ${err.replace(/[<>]/g,"")}
+    <br>${(q.get("error_description")||"").replace(/[<>]/g,"")}</div>
+    <p>Chạy lại <code>cli.py auth tiktok</code> và thử lần nữa.</p>`;
+} else {
+  kq.innerHTML = `<div class="box bad">Chưa có mã uỷ quyền trong địa chỉ.</div>`;
+  hd.innerHTML = `<p>Trang này chỉ hoạt động khi TikTok chuyển hướng tới.
+    Nếu bạn vừa mở thẳng, hãy:</p>
+    <ol>
+      <li>Khai địa chỉ trang này làm <b>Redirect URI</b> trong app TikTok</li>
+      <li>Chạy <code>cli.py auth tiktok</code></li>
+      <li>Bấm đồng ý, TikTok sẽ đưa bạn về đây</li>
+    </ol>`;
+}
+
+function chep() {
+  navigator.clipboard.writeText(location.href).then(
+    () => { const b = document.querySelector("button"); b.textContent = "Đã copy"; },
+    () => alert("Không copy tự động được. Bôi đen địa chỉ rồi copy tay nhé.")
+  );
+}
+</script>
+</body>
+</html>
